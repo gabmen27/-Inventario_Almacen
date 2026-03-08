@@ -82,6 +82,75 @@ app.get('/api/productos/categoria/:id_categoria',(req,res)=>{
 
 })
 
+app.post("/api/productos", (req, res) => {
+  const producto = req.body;
+
+  if (
+    !producto.nombre ||
+    !producto.sku ||
+    !producto.stock_minimo ||
+    !producto.id_categoria ||
+    !producto.id_proveedor
+  ) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "Todos los campos son obligatorios..." });
+  }
+
+  if (!producto.estado) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "Campo estado es obligatorio..." });
+  }
+
+  if (isNaN(producto.estado) || producto.estado != 1) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "El estado debe ser un número (0 o 1)" });
+  }
+
+  if (!producto.precio_compra) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "El precio de compra debe ser mayor a 0" });
+  }
+  if (!producto.precio_venta) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "El precio de venta debe ser mayo a 0" });
+  }
+
+  const sql =
+    "INSERT INTO Producto (nombre, sku, precio_compra, precio_venta, stock_minimo,estado,id_categoria,id_proveedor) VALUES(?,?,?,?,?,?,?,?)";
+
+  pool.query(
+    sql,
+    [
+      producto.nombre,
+      producto.sku,
+      producto.precio_compra,
+      producto.precio_venta,
+      producto.stock_minimo,
+      producto.estado,
+      producto.id_categoria,
+      producto.id_proveedor,
+    ],
+    (error, results) => {
+      if (error) {
+        console.log("Existe un error en la consulta SQL");
+        res
+          .status(500)
+          .json({ status: 500, message: "Error en la consulta SQL" });
+      } else {
+        producto.id_producto = results.insertId; //Me devuelve el ID con el que se inserto el libro en linea 106
+        res
+          .status(201)
+          .json({ status: 201, message: "Success", data: results });
+      }
+    },
+  );
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
