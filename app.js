@@ -44,7 +44,6 @@ app.get('/api/productos/:id', (req, res) => {
 
 });
 
-<<<<<<< HEAD
 // Obtener todos los productos
 app.get('/api/productos', (req, res) => {
 
@@ -125,8 +124,7 @@ app.put('/api/productos/:id', (req, res) => {
 
 });
 
-=======
->>>>>>> 33f4141e6b1d00c722875bb3d6a44be191eb24a7
+
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
